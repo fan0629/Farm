@@ -4316,9 +4316,21 @@ function readyExit() {
     }
 }
 
+function err(e) {
+    if (!e.message.match(/InterruptedException/)) {
+        consolex.$(e.message, 4, 1, 0, -1);
+        consolex.$(e.stack, 4, 0, 0, 1);
+    }
+    $$flag.epilogue_err_occurred = true;
+}
+
+function exitNow() {
+    $$app.exit();
+}
+
 // entrance //
 $$init.check().global().queue().delay().monitor().unlock().prompt().command();
 
 require("./modules/plugin-farm").run();
 
-Promise.all([readyExit()])
+Promise.all([readyExit()]).catch(err).then(exitNow)
