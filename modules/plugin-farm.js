@@ -1,5 +1,5 @@
-const {imagesx} = require("./ext-images");
-const common = require("./工具方法");
+let {imagesx} = require("./ext-images");
+let common = require("./工具方法");
 
 let speed = 0.9; //脚本速度倍率
 let WIDTH = device.width === 0 ? 1080 : device.width;
@@ -13,7 +13,6 @@ module.exports = {
         main();
     }
 }
-main();
 
 function main() {
     imagesx.permit();
