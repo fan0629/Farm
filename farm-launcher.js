@@ -81,7 +81,7 @@ let $$init = {
             global.$$app = {
                 developer: String.unTap('434535154232343343441542000003'),
                 rl_title: String.unEsc('2615FE0F0020597D53CB6392884C699C'),
-                task_name: String.unEsc('8682868168EE6797').surround('"'),
+                task_name: "\"芭芭农场\"",
                 autojs_name: autojs.getAppName(),
                 autojs_pkg: autojs.getPkgName(),
                 autojs_ver_name: autojs.getVerName(),

@@ -28,7 +28,7 @@ typeof module === 'object' ? module.exports = _export : _export.run();
 function _getDiagWelcome() {
     return dialogsx
         .builds(['项目部署',
-            '欢迎使用蚂蚁森林项目部署工具\n此工具用于 v2.0.0 以上版本的项目部署',
+            '欢迎使用芭芭农场项目部署工具\n此工具用于 v2.0.0 以上版本的项目部署',
             ['了解项目', 'hint'], ['退出', 'caution'], ['开始部署', 'attraction'], 1])
         .on('neutral', _showDiagAboutProj)
         .on('negative', (d) => {
