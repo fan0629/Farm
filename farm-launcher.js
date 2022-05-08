@@ -4231,6 +4231,7 @@ let $$init = {
 // entrance //
 $$init.check().global().queue().delay().monitor().unlock().prompt().command();
 
+imagesx.permit();
 var speed = 0.9; //脚本速度倍率
 var WIDTH = device.width == 0 ? 1080 : device.width;
 var HEIGHT = device.height == 0 ? 2340 : device.height;
