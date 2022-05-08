@@ -1,7 +1,7 @@
 module.exports = {
     af: {
         // project description
-        project_desc: '蚂蚁森林',
+        project_desc: '芭芭农场',
         // i know the trick about the reason you wanna turn this switch off
         self_collect_switch: true,
         // sometimes alipay will not be launched without Auto.js running in the foreground
