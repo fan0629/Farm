@@ -4228,7 +4228,97 @@ let $$init = {
     },
 };
 
+function readyExit() {
+    return Promise.resolve()
+        .then(_cleanerReady).catch(this.err)
+        .then(_pagesReady).catch(this.err)
+        .then(_floatyReady).catch(this.err)
+        .then(_autoTaskReady).catch(this.err);
+
+    // tool function(s) //
+
+    function _cleanerReady() {
+        $$app.tidy(0);
+    }
+
+    function _pagesReady() {
+        $$app.page.closeIntelligently();
+        $$app.page.autojs.spring_board.remove();
+    }
+
+    function _floatyReady() {
+        return $$flag.show_floaty_result && new Promise((reso) => {
+            consolex._('监测Floaty结束等待信号');
+            timersx.rec.save('floaty_result_waiting');
+            timersx.setInterval(function () {
+                let _ctd = $$cfg.floaty_result_countdown_sec;
+                let _max = (_ctd + 5) * 1e3;
+                if (timersx.rec.gt('floaty_result_waiting', _max)) {
+                    $$flag.floaty_result_fin = true;
+                    consolex._('放弃等待Floaty消息结束信号', 3);
+                    consolex._('等待结束信号超时', 3);
+                }
+            }, 200, function () {
+                if ($$flag.floaty_result_fin) {
+                    consolex._('检测到Floaty结束等待信号');
+                    $$app.layout.closeAll('without_cover');
+                    reso(_updateDialogAsync());
+                    return true;
+                }
+            });
+        });
+
+        // tool function(s) //
+
+        function _updateDialogAsync() {
+            return $$flag.update_dialog_uphold && new Promise((resolve) => {
+                consolex._('等待更新对话框结束信号');
+                timersx.rec.save('update_dialog_uphold');
+                let _fin = (msg) => {
+                    consolex._(msg);
+                    clearInterval(_itv);
+                    resolve(true);
+                };
+                let _tt = () => ($$flag.update_dialog_deploying ? 5 : 1) * 60e3;
+                let _itv = setInterval(() => {
+                    if (!$$flag.update_dialog_uphold) {
+                        _fin('检测到更新对话框结束信号');
+                    }
+                    if (timersx.rec.gt('update_dialog_uphold', _tt())) {
+                        _fin('放弃等待更新对话框结束信号');
+                    }
+                }, 200);
+            });
+        }
+    }
+
+    function _autoTaskReady() {
+        return new Promise((reso) => {
+            let _thd = $$app.thd_set_auto_task;
+            let _cond = function () {
+                if (!_thd || !_thd.isAlive()) {
+                    return reso() || true;
+                }
+            };
+            if (!_cond()) {
+                consolex._('等待定时任务设置完成');
+                timersx.setInterval(function () {
+                    let _max = 10e3;
+                    if (timersx.rec.gt('set_auto_task', _max)) {
+                        consolex.$('放弃等待定时任务设置完成', 4);
+                        consolex.$('等待超时', 4, 0, 1);
+                        _thd.interrupt();
+                        reso();
+                    }
+                }, 200, _cond);
+            }
+        });
+    }
+}
+
 // entrance //
 $$init.check().global().queue().delay().monitor().unlock().prompt().command();
 
 require("./modules/plugin-farm").run();
+
+Promise.all([readyExit()])
