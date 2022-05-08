@@ -156,7 +156,7 @@ let $$init = {
                 },
             };
 
-            $$sel.add('af', ['蚂蚁森林', {isAlipay: true}])
+            $$sel.add('af', ['芭芭农场', {isAlipay: true}])
                 .add('alipay_home', [/首页|Homepage/, {bi$: [0, cY(0.7), W, H], isAlipay: true}])
                 .add('af_title', [/蚂蚁森林|Ant Forest/, {bi$: [0, 0, cX(0.4), cY(0.2)], isAlipay: true}])
                 .add('af_home', [/合种|背包|通知|攻略|任务|.*大树养成.*/, {isAlipay: true}])
