@@ -1093,7 +1093,7 @@ let exp = {
      * Create a android launcher shortcut with Auto.js dialogs
      * @param {string} file
      * @example
-     * appx.createShortcut('./Ant-Forest-003/ant-forest-launcher.js');
+     * appx.createShortcut('./Ant-Forest-003/farm-launcher.js');
      * @see org.autojs.autojs.ui.shortcut.ShortcutCreateActivity
      */
     createShortcut(file) {

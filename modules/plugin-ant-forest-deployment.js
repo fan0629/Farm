@@ -52,8 +52,8 @@ function _showDiagAboutProj() {
             '脚本运行安全', '事件监测与处理', '黑名单机制', '项目管理', '账户功能',
             '统计功能', '图形化配置工具',
         ].map(s => '·\x20' + s).join('\n') + '\n\n' +
-        '- 项目作者 -' + '\n' + '· SuperMonster003' + '\n\n' +
-        '- 项目链接 -' + '\n' + '· https://github.com/SuperMonster003/Ant-Forest',
+        '- 项目作者 -' + '\n' + '· fan0629' + '\n\n' +
+        '- 项目链接 -' + '\n' + '· https://github.com/fan0629/Farm',
         0, 0, '返回', 1,
     ], {
         linkify: 'WEB_URLS',
@@ -135,7 +135,7 @@ function _deployVersion(version) {
                     dialogs.build({
                         title: '新项目使用提示',
                         content: '可能需要在Auto.js程序主页下拉刷新才能看到新项目\n' +
-                            '新项目默认是以"Ant-Forest-003"命名的蓝色目录 进入目录可运行新项目\n' +
+                            '新项目默认是以"Farm"命名的蓝色目录 进入目录可运行新项目\n' +
                             '对于当前目录下的旧项目文件 若无保留需要 可全部移除\n' +
                             '移除时需谨慎 避免误删可能存在的项目以外的重要文件',
                         positive: '下一步',
@@ -156,7 +156,7 @@ function _deployVersion(version) {
                             app.startActivity({
                                 packageName: _pkg,
                                 className: _cls_n_pref + '.external.open.RunIntentActivity',
-                                data: 'file://' + _tar + '/ant-forest-launcher.js',
+                                data: 'file://' + _tar + '/farm-launcher.js',
                             });
                         };
                         try {

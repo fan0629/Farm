@@ -57,7 +57,7 @@ function _getTsFromArgv() {
 
 function _getTsFromAutoTask() {
     return timersx.queryTimedTasks({
-        path: files.path('../ant-forest-launcher.js'),
+        path: files.path('../farm-launcher.js'),
     }).map(task => task.getNextTime()).sort()[0];
 }
 

@@ -28,8 +28,8 @@ let _ = {
         {name: '/assets'},
         {name: '/modules', necessary: true},
         {name: '/tools'},
-        {name: 'ant-forest-launcher.js', necessary: true},
-        {name: 'ant-forest-settings.js'},
+        {name: 'farm-launcher.js', necessary: true},
+        {name: 'farm-settings.js'},
         {name: '.gitignore'},
         {name: 'jsconfig.json'},
         {name: 'project.json', necessary: true},
@@ -99,7 +99,7 @@ let exp = {
         }
         let _json_name = 'project.json';
         let _json_path = files.join(_path, _json_name);
-        let _main_name = 'ant-forest-launcher.js';
+        let _main_name = 'farm-launcher.js';
         let _main_path = files.join(_path, _main_name);
         let _res = {
             version_name: _ver_name,
@@ -148,7 +148,7 @@ let exp = {
             if (this.isAlike(_cwd)) {
                 return _cwd;
             }
-            let _proj_def_n = 'Ant-Forest-003';
+            let _proj_def_n = 'Farm';
             let _root_proj_path = files.join(filesx.getScriptDirPath(), _proj_def_n);
             if (files.isDir(_root_proj_path)) {
                 return _root_proj_path;
@@ -224,7 +224,7 @@ let exp = {
             while (_max--) {
                 try {
                     let _items = http.get('https://api.github.com/repos/' +
-                        'SuperMonster003/Ant-Forest/releases' +
+                        'fan0629/Farm/releases' +
                         '?per_page=' + _per_page + '&page=' + _cur_page++)
                         .body.json().filter(o => o.tag_name >= _min_ver);
                     if (global._$_get_proj_releases_interrupted) {
@@ -728,7 +728,7 @@ let exp = {
                 return _cwd;
             }
             let _aj_wd = filesx.getScriptDirPath();
-            let _proj_def_n = 'Ant-Forest-003';
+            let _proj_def_n = 'Farm';
             _cwd = files.join(_aj_wd, _proj_def_n);
             if (this.isAlike(_cwd)) {
                 return _cwd;
