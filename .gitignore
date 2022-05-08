@@ -6,7 +6,6 @@ test*.js
 *.zip
 /.bak
 /.git
-/.github
 /.idea
 /assets/declarations/android/android-framework-26.d.ts
 /assets/declarations/android/android-platform-27.d.ts
