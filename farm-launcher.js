@@ -4260,6 +4260,10 @@ function main() {
                 toastLog("发现升级窗口");
                 common.clickUiObject(id("com.taobao.taobao:id/update_imageview_cancel_v2").findOnce())
             }
+            if (desc("浮层关闭按钮").findOnce()) {
+                toastLog("发现浮层通知");
+                common.clickUiObject(desc("浮层关闭按钮").findOnce());
+            }
         }, 4000 / speed)
     })
     set = storage.get(nowDate, set);
@@ -4421,6 +4425,7 @@ function main() {
             if (task_info.includes("下单")
                 || task_info === "逛逛支付宝芭芭农场(0/1)"
                 || task_info === "买精选商品送2万肥料(0/2)"
+                || task_info === "逛精选商品(3/3)"
             ) {
                 continue;
             }
@@ -4497,6 +4502,17 @@ function main() {
                         toastLog("未安装点淘app");
                     }
                     sleep(1000 / speed);
+                    back();
+                    break;
+                case "逛精选商品(0/3)":
+                case "逛精选商品(1/3)":
+                case "逛精选商品(2/3)":
+                    common.clickUiObject(btn);
+                    sleep(2500)
+                    swipe(500, 1600, 500, 1000, 2000)
+                    sleep(12000)
+                    textContains("浏览完成，现在下单").findOne(5000 / speed);
+                    sleep(800);
                     back();
                     break;
                 default:
