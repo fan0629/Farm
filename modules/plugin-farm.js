@@ -271,6 +271,7 @@ function main() {
                         common.clickUiObject(id("com.taobao.taobao:id/confirm_yes").findOne(1000));
                         sleep(5000);
                         common.killApp("点淘")
+                        sleep(3000 / speed);
                     } else {
                         toastLog("未安装点淘app");
                     }

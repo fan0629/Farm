@@ -4008,7 +4008,7 @@ let $$init = {
                                 d.dismiss();
                                 $$app.tidy(0);
                                 // language=JS
-                                consolex.$('`放弃${$$app.task_name}任务`'.ts, 1, 1, 0, 2);
+                                //consolex.$('`放弃${$$app.task_name}任务`'.ts, 1, 1, 0, 2);
                                 exit();
                             };
 
