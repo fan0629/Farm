@@ -7,14 +7,14 @@ var common = {
             clickable = true
         }
         if (clickable && uiObject.clickable()) {
-            log("点击 " + (uiObject.text() == "" ? uiObject.desc() : uiObject.text()) + " 控件");
+            log("点击 " + (uiObject.text() === "" ? uiObject.desc() : uiObject.text()) + " 控件");
             return uiObject.click();
         }
 
         let childrenUi = uiObject.children()
         for (let child of childrenUi) {
             if (child.clickable()) {
-                log("点击 " + (uiObject.text() == "" ? uiObject.desc() : uiObject.text()) + " 子控件");
+                log("点击 " + (uiObject.text() === "" ? uiObject.desc() : uiObject.text()) + " 子控件");
                 return child.click();
             }
         }
@@ -22,7 +22,7 @@ var common = {
         var uiObjectParent = uiObject.parent();
         while (uiObjectParent) {
             if (uiObjectParent.clickable()) {
-                log("点击 " + (uiObject.text() == "" ? uiObject.desc() : uiObject.text()) + " 父控件");
+                log("点击 " + (uiObject.text() === "" ? uiObject.desc() : uiObject.text()) + " 父控件");
                 return uiObjectParent.click();
             }
             uiObjectParent = uiObjectParent.parent();
@@ -30,7 +30,7 @@ var common = {
 
         sleep(1000);
         let b = uiObject.bounds();
-        log("点击 " + (uiObject.text() == "" ? uiObject.desc() : uiObject.text()) + " 坐标");
+        log("点击 " + (uiObject.text() === "" ? uiObject.desc() : uiObject.text()) + " 坐标");
         return click(b.centerX(), b.centerY());
     },
     clickByText: (text, timeout, clickable) => {
@@ -156,7 +156,7 @@ var common = {
         if (account) {
             toastLog(account)
             let accUi = textStartsWith(account).findOne()
-            if (accUi.parent().child(0).text() == "当前") {
+            if (accUi.parent().child(0).text() === "当前") {
                 do {
                     back();
                     sleep(1000);
@@ -190,20 +190,20 @@ var common = {
         toastLog("打开大号支付宝");
     },
     killApp: (appName) => {
-        let packageName = getPackageName(appName);
-        app.openAppSetting(packageName); 
+        let packageName = getPackageName(appName);
+        app.openAppSetting(packageName);
         text(appName).waitFor();
-        let is_sure = textMatches(/(.*强.*|.*停.*|.*结.*)/).findOne();  
-        if  (is_sure.enabled()) {  
+        let is_sure = textMatches(/(.*强.*|.*停.*|.*结.*)/).findOne();
+        if (is_sure.enabled()) {
             common.clickUiObject(textMatches(/(.*强.*|.*停.*|.*结.*)/).findOne());
-            common.clickUiObject(textMatches(/(.*确.*|.*定.*)/).findOne()); 
-            log(appName  +  "应用已被关闭");      
-            sleep(1000);     
-            back();     
-        } else {                   
-            log(appName  +  "应用不能被正常关闭或不在后台运行");    
-            back();  
-        }  
+            common.clickUiObject(textMatches(/(.*确.*|.*定.*)/).findOne());
+            log(appName + "应用已被关闭");
+            sleep(1000);
+            back();
+        } else {
+            log(appName + "应用不能被正常关闭或不在后台运行");
+            back();
+        }
     }
 };
 module.exports = common;
