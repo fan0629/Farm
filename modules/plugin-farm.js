@@ -174,6 +174,7 @@ function main() {
     let taobaoDailyPoint = findColorEquals(captureScreen(), 0x8b4100, WIDTH / 2, HEIGHT / 2, WIDTH / 2, HEIGHT / 2)
     if (taobaoDailyPoint != null) {
         click(taobaoDailyPoint.x, taobaoDailyPoint.y);
+        sleep(1000 / speed);
         common.clickByTextContains("关闭", 2000 / speed)
         sleep(1000 / speed)
         click(WIDTH - taobaoDailyPoint.x, taobaoDailyPoint.y)
@@ -255,6 +256,7 @@ function main() {
                     break;
                 case "走走路就轻松赚到钱(0/1)":
                 case "来打工赚提现红包(0/1)":
+                case "去每天打工赚零花钱(0/1)":
                     common.clickUiObject(btn);
                     let live_pkg = "com.taobao.live";
                     let _pkg_mgr = context.getPackageManager();
