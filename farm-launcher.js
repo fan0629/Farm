@@ -2970,85 +2970,6 @@ let $$init = {
             };
         }
     },
-    delay() {
-        let _fg = fgAppBlistSetter();
-        _fg.trigger() ? _fg.autoDelay() : _fg.clear();
-
-        return $$init;
-
-        // tool function(s) //
-
-        function fgAppBlistSetter() {
-            return {
-                trigger() {
-                    return _screenOn() && _inBlist();
-
-                    // tool function(s) //
-
-                    function _screenOn() {
-                        if (devicex.is_init_screen_on) {
-                            return true;
-                        }
-                        consolex._('跳过前置应用黑名单检测');
-                        consolex._('屏幕未亮起');
-                    }
-
-                    function _inBlist() {
-                        let _i_pkg = $$app.init_fg_pkg;
-                        let _passed = '前置应用黑名单检测通过';
-                        let _res = $$cfg.foreground_app_blacklist.some((o) => {
-                            let [_name, _pkg] = o.app_combined_name.split('\n');
-                            if (_i_pkg === _pkg) {
-                                return $$app.fg_black_app = _name;
-                            }
-                        });
-                        _res || consolex._(_i_pkg ? [_passed + ':', _i_pkg] : _passed);
-                        return _res;
-                    }
-                },
-                autoDelay() {
-                    consolex.$('前置应用位于黑名单中:', 1, 0, 0, -1);
-                    consolex.$($$app.fg_black_app);
-
-                    let _delay = delayInfoSetter();
-                    let _ctr = _delay.continuous_times;
-                    let _time = _delay.delay_time;
-                    let _sum = _delay.delay_time_sum;
-                    if (_ctr === 1) {
-                        consolex.$('本次任务自动推迟执行');
-                    } else {
-                        consolex.$('本次任务自动推迟: ' + _time + '分钟');
-                        consolex.$('当前连续推迟次数: ' + _ctr);
-                        consolex.$('当前连续推迟总计: ' + _sum + '分钟');
-                    }
-
-                    storagesx.af.put('fg_blist_ctr', _ctr);
-                    $$app.setPostponedTask(_time, {is_async: true, is_toast: false}); // `exit()` included
-                    sleep(9e3); // in case task isn't set successfully before `exit()`
-                    exit(); // thoroughly prevent script from going on (main thread)
-
-                    // tool function(s) //
-
-                    function delayInfoSetter(minutes) {
-                        let _mm = minutes || [1, 1, 2, 3, 5, 8, 10];
-                        let _ctr = storagesx.af.get('fg_blist_ctr', 0);
-                        let _max_mm = _mm[_mm.length - 1];
-                        let _time = _mm[_ctr] || _max_mm;
-                        let _sum = 0;
-                        for (let i = 0; i < _ctr; i += 1) {
-                            _sum += _mm[i] || _max_mm;
-                        }
-                        return {
-                            continuous_times: _ctr + 1,
-                            delay_time: _time,
-                            delay_time_sum: _sum,
-                        };
-                    }
-                },
-                clear: () => storagesx.af.remove('fg_blist_ctr'),
-            };
-        }
-    },
     unlock() {
         let _is_scr_on = devicex.is_init_screen_on;
         let _is_unlked = devicex.isUnlocked();
@@ -3398,6 +3319,174 @@ let $$init = {
     },
 };
 
+let $$farm = {
+    _epilogue_setter: {
+        logBackIFN: () => $$acc.logBack(),
+        readyExit() {
+            return Promise.resolve()
+                .then(_cleanerReady).catch(this.err)
+                .then(_pagesReady).catch(this.err)
+                .then(_floatyReady).catch(this.err)
+                .then(_autoTaskReady).catch(this.err);
+
+            // tool function(s) //
+
+            function _cleanerReady() {
+                $$app.tidy(0);
+            }
+
+            function _pagesReady() {
+                $$app.page.closeIntelligently();
+                $$app.page.autojs.spring_board.remove();
+            }
+
+            function _floatyReady() {
+                return $$flag.show_floaty_result && new Promise((reso) => {
+                    consolex._('监测Floaty结束等待信号');
+                    timersx.rec.save('floaty_result_waiting');
+                    timersx.setInterval(function () {
+                        let _ctd = $$cfg.floaty_result_countdown_sec;
+                        let _max = (_ctd + 5) * 1e3;
+                        if (timersx.rec.gt('floaty_result_waiting', _max)) {
+                            $$flag.floaty_result_fin = true;
+                            consolex._('放弃等待Floaty消息结束信号', 3);
+                            consolex._('等待结束信号超时', 3);
+                        }
+                    }, 200, function () {
+                        if ($$flag.floaty_result_fin) {
+                            consolex._('检测到Floaty结束等待信号');
+                            $$app.layout.closeAll('without_cover');
+                            reso(_updateDialogAsync());
+                            return true;
+                        }
+                    });
+                });
+
+                // tool function(s) //
+
+                function _updateDialogAsync() {
+                    return $$flag.update_dialog_uphold && new Promise((resolve) => {
+                        consolex._('等待更新对话框结束信号');
+                        timersx.rec.save('update_dialog_uphold');
+                        let _fin = (msg) => {
+                            consolex._(msg);
+                            clearInterval(_itv);
+                            resolve(true);
+                        };
+                        let _tt = () => ($$flag.update_dialog_deploying ? 5 : 1) * 60e3;
+                        let _itv = setInterval(() => {
+                            if (!$$flag.update_dialog_uphold) {
+                                _fin('检测到更新对话框结束信号');
+                            }
+                            if (timersx.rec.gt('update_dialog_uphold', _tt())) {
+                                _fin('放弃等待更新对话框结束信号');
+                            }
+                        }, 200);
+                    });
+                }
+            }
+
+            function _autoTaskReady() {
+                return new Promise((reso) => {
+                    let _thd = $$app.thd_set_auto_task;
+                    let _cond = function () {
+                        if (!_thd || !_thd.isAlive()) {
+                            return reso() || true;
+                        }
+                    };
+                    if (!_cond()) {
+                        consolex._('等待定时任务设置完成');
+                        timersx.setInterval(function () {
+                            let _max = 10e3;
+                            if (timersx.rec.gt('set_auto_task', _max)) {
+                                consolex.$('放弃等待定时任务设置完成', 4);
+                                consolex.$('等待超时', 4, 0, 1);
+                                _thd.interrupt();
+                                reso();
+                            }
+                        }, 200, _cond);
+                    }
+                });
+            }
+        },
+        scrOffIFN() {
+            if ($$bool($$app.init_scr_on_from_broadcast)) {
+                $$app.init_scr_on = $$app.init_scr_on_from_broadcast;
+            }
+
+            if ($$app.queue.excl_tasks_all_len > 1) {
+                consolex._('跳过关闭屏幕');
+                consolex._('当前存在排他性排队任务');
+                return false;
+            }
+
+            if ($$app.init_scr_on) {
+                consolex._('无需关闭屏幕');
+                return false;
+            }
+
+            if ($$flag.cover_user_touched) {
+                consolex._('跳过关闭屏幕');
+                consolex._('检测到屏幕触碰');
+                return false;
+            }
+
+            if ($$flag.epilogue_err_occurred) {
+                consolex._('跳过关闭屏幕');
+                consolex._('检测到收场过程错误标记');
+                return false;
+            }
+
+            $$flag.glob_e_scr_paused = true;
+
+            devicex.screenOff({
+                key_code: {
+                    is_disabled: !($$app.has_root && $$app.root_fxs.screen_off),
+                },
+                provider: {
+                    hint() {
+                        if ($$flag.floaty_result_all_set) {
+                            $$app.layout.screen_turning_off.deploy();
+                        }
+                    },
+                    listener(brake) {
+                        events.observeKey();
+                        events.on('key_down', function (kc) {
+                            $$flag.floaty_result_all_set && $$app.layout.closeAll();
+                            brake('终止屏幕关闭', '检测到按键行为', '键值: ' + kc);
+                        });
+
+                        if ($$flag.floaty_result_all_set) {
+                            $$app.layout.fullscreen_cover.setOnClickListener(function () {
+                                if ($$flag.cover_user_touched) {
+                                    brake('终止屏幕关闭', '检测到屏幕触碰');
+                                    $$app.layout.closeAll();
+                                }
+                            });
+                        }
+                    },
+                },
+            });
+        },
+        exitNow: () => $$app.exit(),
+        err(e) {
+            if (!e.message.match(/InterruptedException/)) {
+                consolex.$(e.message, 4, 1, 0, -1);
+                consolex.$(e.stack, 4, 0, 0, 1);
+            }
+            $$flag.epilogue_err_occurred = true;
+        },
+    },
+    epilogue() {
+        let _ = this._epilogue_setter;
+        _.logBackIFN();
+        Promise.all([_.readyExit()])
+            .then(_.scrOffIFN)
+            .then(_.exitNow)
+            .catch(_.err);
+    }
+}
+
 function readyExit() {
     return Promise.resolve()
         .then(_cleanerReady).catch(this.err)
@@ -3499,8 +3588,8 @@ function exitNow() {
 }
 
 // entrance //
-$$init.check().global().queue().delay().unlock().prompt().command();
+$$init.check().global().queue().unlock().prompt().command();
 
 require("./modules/plugin-farm").run();
 
-Promise.all([readyExit()]).catch(err).then(exitNow)
+$$farm.epilogue();

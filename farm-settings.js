@@ -4807,69 +4807,6 @@ $$view.page.new('本地日志', 'aj_global_log_page', (t) => {
         }))
         .ready();
 });
-
-$$view.page.new('前置应用黑名单', 'foreground_app_blacklist_page', (t) => {
-    $$view.setPage(t, (p_view) => {
-        $$view.setListPageButtons(p_view, 'foreground_app_blacklist');
-    }, {no_scroll_view: true})
-        .add('list', new Layout('/*前置应用黑名单项目*/', {
-            list_head: 'foreground_app_blacklist',
-            data_source_key_name: 'foreground_app_blacklist',
-            list_checkbox: 'visible',
-            listeners: {
-                _list_data: {
-                    item_click(item, idx, item_view) {
-                        item_view['_checkbox'].click();
-                    },
-                    item_bind(item_view, item_holder) {
-                        item_view['_checkbox'].on('click', (checkbox_view) => {
-                            return $$view.commonItemBindCheckboxClickListener
-                                .call(this, checkbox_view, item_holder);
-                        });
-                    },
-                },
-                _check_all: {
-                    click(view) {
-                        let {data_source_key_name: _ds_k} = this;
-                        let aim_checked = view.checked;
-                        let blacklist_len = $$ses[_ds_k].length;
-                        if (!blacklist_len) return view.checked = !aim_checked;
-
-                        $$ses[_ds_k].forEach((o, idx) => {
-                            let o_new = Object.deepClone(o);
-                            o_new.checked = aim_checked;
-                            $$view.updateDataSource(_ds_k, 'splice', [idx, 1, o_new]);
-                        });
-
-                        let deleted_items_idx = _ds_k + '_deleted_items_idx';
-                        let deleted_items_idx_count = _ds_k + '_deleted_items_idx_count';
-                        $$ses[deleted_items_idx_count] = aim_checked ? blacklist_len : 0;
-                        $$ses[deleted_items_idx] = $$ses[deleted_items_idx] || {};
-                        for (let i = 0; i < blacklist_len; i += 1) {
-                            $$ses[deleted_items_idx][i] = aim_checked;
-                        }
-
-                        let remove_btn = $$ses[_ds_k + '_btn_remove'];
-                        aim_checked ? remove_btn.switch_on() : remove_btn.switch_off();
-                    },
-                },
-            },
-        }))
-        .add('info', new Layout('/*dynamic_info*/', {
-            updateOpr(view) {
-                let amount = $$cfg.ses.foreground_app_blacklist.length;
-                view['_info_text'].setText(amount ? '点击标题可排序' : '点击添加按钮可添加应用');
-            },
-        }))
-        .add('info', new Layout('"有效"标签表示应用是否存在于设备中', {
-            updateOpr(view) {
-                let amount = $$cfg.ses.foreground_app_blacklist.length;
-                view.setVisibility(amount ? 0 : 8);
-            },
-        }))
-        .add('blank')
-        .ready();
-});
 $$view.page.new('运行与安全', 'script_security_page', (t) => {
     $$view.setPage(t)
         .add('subhead', new Layout('基本设置'))
