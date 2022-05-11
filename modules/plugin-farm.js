@@ -385,7 +385,7 @@ function 每日签到() {
     sleep(2500)
     click(500, 500)
     sleep(2000);
-    common.clickByText("全部领取")
+    common.clickByText("全部领取", 2000)
     sleep(1000)
     common.clickByTextMatches(/签到领积分|每日赚积分|做任务赚积分|每日签到/);
     sleep(1000);
@@ -413,20 +413,24 @@ function 赚积分() {
                 }
                 str = subject.parent().child(0).child(0).text();
             }
-            common.clickUiObject(subject.parent().parent().findOne(className("android.widget.Button").text("去完成").clickable()));
-            if (id("android.miui:id/app1").findOne(3000)) {
-                common.clickByText("取消", 1000 / speed);
-            }
+            let task_btn = subject.parent().parent().findOne(className("android.widget.Button").text("去完成").clickable());
             if (str.includes("淘金币")) {
+                common.clickUiObject(task_btn);
+                if (id("android.miui:id/app1").findOne(3000)) {
+                    common.clickByText("取消", 1000 / speed);
+                }
                 sleep(1000 / speed);
                 launchApp("支付宝")
             } else if (str.includes("施肥")) {
+                common.clickUiObject(task_btn);
                 let teskBtn = className("android.widget.Image").depth(16).untilFind().get(1)
                 let pointY = teskBtn.bounds().centerY()
                 click(540, pointY);
             } else if (str.includes("15")) {
+                common.clickUiObject(task_btn);
                 sleep(16000);
             } else if (str.includes("逛天猫")) {
+                common.clickUiObject(task_btn);
                 sleep(1000 / speed);
                 launchApp("支付宝")
                 sleep(16000);
