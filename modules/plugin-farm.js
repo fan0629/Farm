@@ -483,5 +483,4 @@ function 施肥() {
         }
     }
     toastLog("施肥完成")
-    exit()
 }

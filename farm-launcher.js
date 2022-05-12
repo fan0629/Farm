@@ -1455,7 +1455,6 @@ let $$farm = {
         readyExit() {
             return Promise.resolve()
                 .then(_cleanerReady).catch(this.err)
-                .then(_pagesReady).catch(this.err)
                 .then(_floatyReady).catch(this.err)
                 .then(_autoTaskReady).catch(this.err);
 
@@ -1463,11 +1462,6 @@ let $$farm = {
 
             function _cleanerReady() {
                 $$app.tidy(0);
-            }
-
-            function _pagesReady() {
-                $$app.page.closeIntelligently();
-                $$app.page.autojs.spring_board.remove();
             }
 
             function _floatyReady() {
