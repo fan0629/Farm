@@ -483,4 +483,6 @@ function 施肥() {
         }
     }
     toastLog("施肥完成")
+    sleep(1000);
+    common.killApp("淘宝")
 }
