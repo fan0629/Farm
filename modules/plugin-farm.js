@@ -21,7 +21,7 @@ function main() {
                 toastLog("脚本超时退出");
                 exit();
             },
-            470000 / speed);
+            400000 / speed);
     });
     threads.start(function () {
         setInterval(function () {
@@ -235,18 +235,6 @@ function main() {
                     }
                     back();
                     break;
-                case "逛精选好物(0/1)":
-                case "逛精选好货(0/1)":
-                case "浏览页面有好礼(0/1)":
-                case "浏览变美体验官活动(0/1)":
-                    common.clickUiObject(btn);
-                    sleep(1000 / speed);
-                    swipe(500, 1800, 500, 1200, 2000);
-                    sleep(15000);
-                    //textContains("任务完成").findOne(5000 / speed);
-                    sleep(1000 / speed);
-                    back();
-                    break;
                 case "浏览金币小镇得肥料(0/1)":
                 case "浏览店铺有好礼(0/1)":
                 case "浏览短视频(0/1)":
@@ -293,15 +281,28 @@ function main() {
                     sleep(800);
                     back();
                     break;
+                case "逛精选好物(0/1)":
+                case "逛精选好货(0/1)":
+                case "浏览页面有好礼(0/1)":
+                case "浏览变美体验官活动(0/1)":
+                    common.clickUiObject(btn);
+                    sleep(1000 / speed);
+                    swipe(500, 1800, 500, 1200, 2000);
+                    sleep(15000);
+                    //textContains("任务完成").findOne(5000 / speed);
+                    sleep(1000 / speed);
+                    back();
+                    break;
                 default:
-                    if (task_info.includes("淘宝人生")) {
+                    if (btn_text === "去浏览") {
                         common.clickUiObject(btn);
-                        text("淘宝人生").findOne(4000 / speed)
-                        sleep(7000 / speed);
-                        click(500, 2000);
-                        sleep(4000 / speed);
-                        back();
                         sleep(1000 / speed);
+                        swipe(500, 1800, 500, 1200, 2000);
+                        sleep(15000);
+                        //textContains("任务完成").findOne(5000 / speed);
+                        sleep(1000 / speed);
+                        back();
+                        break;
                     } else {
                         log("跳过任务");
                     }
