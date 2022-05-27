@@ -241,7 +241,7 @@ function main() {
                     common.clickUiObject(btn);
                     sleep(15000);
                     textContains("全部完成啦").findOne(5000 / speed);
-                    sleep(1000);
+                    sleep(1500 / speed);
                     back();
                     break;
                 case "走走路就轻松赚到钱(0/1)":
@@ -433,7 +433,7 @@ function 赚积分() {
                 click(540, pointY);
             } else if (str.includes("15")) {
                 common.clickUiObject(task_btn);
-                sleep(16000);
+                sleep(17000);
             } else if (str.includes("逛天猫")) {
                 common.clickUiObject(task_btn);
                 sleep(1000 / speed);
