@@ -18,10 +18,9 @@ function main() {
     imagesx.permit();
     threads.start(function () {
         setTimeout(function () {
-                toastLog("脚本超时退出");
-                exit();
-            },
-            400000 / speed);
+            toastLog("脚本超时退出");
+            exit();
+        }, 500000 / speed);
     });
     threads.start(function () {
         setInterval(function () {
@@ -225,15 +224,16 @@ function main() {
                         common.clickByText("卫衣", 1000);
                         common.clickByDesc("卫衣", 1000);
                         swipe(500, 1900, 500, 400, 16000);
-                        back();
-                        sleep(1000);
                     } else {
                         common.clickUiObject(label_btn);
                         text("滑动浏览 15 秒得").findOne(3000);
                         sleep(500 / speed);
                         swipe(500, 1900, 500, 400, 16000);
                     }
-                    back();
+                    while (!text("做任务赢奖励").exists()) {
+                        back();
+                        sleep(1000);
+                    }
                     break;
                 case "浏览金币小镇得肥料(0/1)":
                 case "浏览店铺有好礼(0/1)":
@@ -296,11 +296,9 @@ function main() {
                 default:
                     if (btn_text === "去浏览") {
                         common.clickUiObject(btn);
-                        sleep(1000 / speed);
-                        swipe(500, 1800, 500, 1200, 2000);
                         sleep(15000);
-                        //textContains("任务完成").findOne(5000 / speed);
-                        sleep(1000 / speed);
+                        textContains("全部完成啦").findOne(5000 / speed);
+                        sleep(1500 / speed);
                         back();
                         break;
                     } else {
@@ -433,7 +431,7 @@ function 赚积分() {
                 click(540, pointY);
             } else if (str.includes("15")) {
                 common.clickUiObject(task_btn);
-                sleep(17000);
+                sleep(18000);
             } else if (str.includes("逛天猫")) {
                 common.clickUiObject(task_btn);
                 sleep(1000 / speed);
