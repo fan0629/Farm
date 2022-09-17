@@ -53,50 +53,58 @@ function main() {
     }
 
     common.clickByText("首页", 2000 / speed);
-    var uiObject = boundsInside(0, 300, 1080, 1500).text("芭芭农场").findOne();
+    var uiObject = boundsInside(0, 300, 1080, 1100).text("芭芭农场").findOne();
     common.clickUiObject(uiObject);
     text("🇨🇳🏅+…").findOne(4000 / speed);
     sleep(1000 / speed)
-    let dailyPoint = findColorEquals(captureScreen(), 0x8b4100, WIDTH / 2, HEIGHT / 2, WIDTH / 2, HEIGHT / 2)
-    toastLog("点击领取每日肥料")
-    if (dailyPoint) {
-        click(dailyPoint.x, dailyPoint.y);
+    var img = captureScreen();
+    var templ = images.read("/storage/emulated/0/脚本/Farm/assets/images/daily.jpg");
+    var p = findImage(img, templ);
+    if (p) {
+        toastLog("发现每日肥料" + p);
+        click(p.x + 100, p.y + 10);
+    } else {
+        toast("没找到");
     }
     sleep(1000 / speed);
     common.clickByText("去领更多肥料", 1000);
     sleep(1000 / speed)
     if (!textMatches(/领取|已领取/).exists()) {
-        common.clickUiObject(className("android.widget.Image").boundsInside(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT).depth(16).untilFind().get(0));
+        if (text("任务列表").exists()) {
+            common.clickByText("任务列表");
+        } else {
+            common.clickUiObject(className("android.widget.Image").boundsInside(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT).depth(16).untilFind().get(0));
+        }
     }
     common.clickByText("立即施肥", 1000)
     sleep(1000 / speed);
     for (let i = 0; i < 4; i++) {
         for (let j = 0; j < 100; j++) {
-            let task_list = getZfbTask();
-            if (j >= task_list.length) {
+            let task_btn_list = getZfbButtons();
+            if (j >= task_btn_list.length) {
                 break;
             }
-            let task = task_list.get(j);
-            let index = task.indexInParent();
-            let btn_parent = className("android.view.View").depth(17).indexInParent(index + 2).findOnce();
-            if (btn_parent == null) {
+            let task_btn = task_btn_list.get(j);
+            let index = task_btn.parent().indexInParent();
+            let task = task_btn.parent().parent().child(index - 2);
+            if (task == null) {
+                toastLog("未找到任务控件");
                 continue;
             }
-            let btn = btn_parent.findOne(textMatches(/去完成|去浏览|去逛逛/));
             let task_info = task.text();
-            if (btn == null
-                || task_info === "逛逛淘宝芭芭农场 (0/1)"
-                || task_info === "逛精选好物得1500肥料 (1/1)"
-                || task_info === "逛一逛领1500肥料 (3/3)") {
+            if (task_info.includes("逛逛淘宝芭芭农场 (0/1)") ||
+                task_info.includes("逛精选好物得1500肥料 (1/1)") ||
+                task_info.includes("逛一逛领1500肥料 (3/3)") ||
+                task_info.includes("去淘特领好礼 (0/1)")) {
                 continue;
             }
             toastLog(task_info)
-            switch (task_info) {
+            switch (task_info.trim()) {
                 case "逛精选好物得1500肥料 (0/1)":
                 case "逛一逛领1500肥料 (0/3)":
                 case "逛一逛领1500肥料 (1/3)":
                 case "逛一逛领1500肥料 (2/3)":
-                    common.clickUiObject(btn);
+                    common.clickUiObject(task_btn);
                     sleep(2500)
                     swipe(500, 1600, 500, 1000, 2000)
                     sleep(12000)
@@ -105,9 +113,8 @@ function main() {
                     back();
                     break;
                 case "逛逛花呗翻翻卡 (0/1)":
-                case "去淘特领好礼 (0/1)":
                 case "逛一逛芝麻分 (0/1)":
-                    common.clickUiObject(btn);
+                    common.clickUiObject(task_btn);
                     sleep(2000 / speed);
                     back();
                     break;
@@ -122,10 +129,10 @@ function main() {
         common.clickUiObject(uiObj);
     });
     sleep(1000 / speed);
-    if (text("逛逛淘宝芭芭农场 (0/1)").exists()) {
-        let task = text("逛逛淘宝芭芭农场 (0/1)").findOnce();
-        let index = task.indexInParent()
-        let btn = className("android.view.View").depth(17).indexInParent(index + 2).findOne().child(0)
+    if (textContains("逛逛淘宝芭芭农场 (0/1)").exists()) {
+        let task = textContains("逛逛淘宝芭芭农场 (0/1)").findOnce();
+        let index = task.indexInParent();
+        let btn = className("android.view.View").depth(17).indexInParent(index + 2).findOne().child(0);
         common.clickUiObject(btn);
         if (id("android.miui:id/app1").findOne(3000 / speed)) {
             id("android.miui:id/app1").findOne().click();
@@ -172,14 +179,23 @@ function main() {
         sleep(600 / speed)
     }
     log("点击领取每日肥料")
-    let taobaoDailyPoint = findColorEquals(captureScreen(), 0x8b4100, WIDTH / 2, HEIGHT / 2, WIDTH / 2, HEIGHT / 2)
+    var img = captureScreen();
+    var templ = images.read("/storage/emulated/0/脚本/Farm/assets/images/daily.jpg");
+    var p = findImage(img, templ);
+    if (p) {
+        toastLog("发现每日肥料" + p);
+        click(p.x + 100, p.y + 10);
+    } else {
+        toast("没找到");
+    }
+    /*let taobaoDailyPoint = findColorEquals(captureScreen(), 0x8b4100, WIDTH / 2, HEIGHT / 2, WIDTH / 2, HEIGHT / 2)
     if (taobaoDailyPoint != null) {
         click(taobaoDailyPoint.x, taobaoDailyPoint.y);
         sleep(1000 / speed);
         common.clickByTextContains("关闭", 2000 / speed)
         sleep(1000 / speed)
         click(WIDTH - taobaoDailyPoint.x, taobaoDailyPoint.y)
-    }
+    }*/
     sleep(1000 / speed)
     common.clickUiObject(className("android.widget.Image").depth(13).clickable().indexInParent(2).findOne());
     sleep(1500 / speed);
@@ -375,10 +391,9 @@ function 支付宝助力() {
     storage.put(nowDate, set);
 }
 
-function getZfbTask() {
-    return className("android.view.View").depth(17).textMatches(/\S.+/).find();
+function getZfbButtons() {
+    return className("android.widget.Button").depth(18).textMatches(/去浏览|去完成|去逛逛/).find();
 }
-
 function getButtons() {
     return className("android.widget.Button").depth(17).textMatches(/去浏览|去完成|去逛逛/).find();
 }
@@ -404,13 +419,14 @@ function 每日签到() {
 function 赚积分() {
     swipe(500, 1700, 500, 1000, 1000);
     sleep(1000 / speed);
-    for (var i = 0; i < 5; i++) {
-        subject = textMatches(/ 赚3积分| 赚5积分/).findOne(1000 / speed)
+    for (var i = 0; i < 8; i++) {
+        subject = textMatches(/\+3|\+1/).findOne(1000 / speed)
         if (subject) {
-            var str = subject.parent().child(0).child(0).text();
+            toastLog(subject.text())
+            var str = subject.parent().parent().child(1).text();
             toastLog(str)
             if (str.includes("答题")) {
-                subject = textMatches(/ 赚3积分| 赚5积分/).findOnce(1);
+                subject = textMatches(/\+3|\+1/).findOnce(1);
                 if (subject == null) {
                     break;
                 }
@@ -429,15 +445,16 @@ function 赚积分() {
                 let teskBtn = className("android.widget.Image").depth(16).untilFind().get(1)
                 let pointY = teskBtn.bounds().centerY()
                 click(540, pointY);
-            } else if (str.includes("15")) {
+            } else if (str.includes("15") ||
+                str === "逛618精选好物会场") {
                 common.clickUiObject(task_btn);
-                sleep(18000);
+                sleep(20000);
             } else if (str.includes("逛天猫")) {
                 common.clickUiObject(task_btn);
                 sleep(1000 / speed);
                 launchApp("支付宝")
                 sleep(16000);
-            } else if (str.includes("蚂蚁庄园")) {
+            } else {
                 continue;
             }
             sleep(1000 / speed);
@@ -460,7 +477,12 @@ function 施肥() {
     click(500, 400);
     common.clickByText("立即施肥", 2000)
     //className("android.webkit.WebView").findOne().child(0).child(0).child(5).child(0).child(1).click();
-    let teskBtn = className("android.widget.Image").boundsInside(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT).depth(16).untilFind().get(0)
+    let teskBtn;
+    if (text("任务列表").exists()) {
+        teskBtn = text("任务列表").findOne();
+    } else {
+        teskBtn = className("android.widget.Image").boundsInside(WIDTH / 2, HEIGHT / 2, WIDTH, HEIGHT).depth(16).untilFind().get(0);
+    }
     let pointY = teskBtn.bounds().centerY()
     for (let i = 0; i < 200; i++) {
         click(540, pointY);
